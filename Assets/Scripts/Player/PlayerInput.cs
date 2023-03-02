@@ -14,13 +14,23 @@ public class PlayerInput : MonoBehaviour
     // The speed of the camera's movement
     [SerializeField] private float lookSensitivity = 12.0f;
 
+    // The thrust force in the y-axis direction of the player
+    [SerializeField] private float thrustForce = 20.0f;
+    
     // The instance of the player controller
     [SerializeField] private PlayerController playerController;
 
+    // The "configurable joint" component of the player (for simulating flying)
+    private ConfigurableJoint configurableJoint;
+    
     // Start is called before the first frame update
     void Start()
     {
+        // Lock the cursor
         // Cursor.lockState = CursorLockMode.Locked;
+        
+        // Assign the "configurable joint" component
+        configurableJoint = GetComponent<ConfigurableJoint>();
     }
 
     // Update is called once per frame
@@ -38,5 +48,28 @@ public class PlayerInput : MonoBehaviour
         Vector3 yRotation = new Vector3(0.0f, xMouse, 0.0f) * lookSensitivity;
         Vector3 xRotation = new Vector3(-yMouse, 0.0f, 0.0f) * lookSensitivity;
         playerController.Rotate(yRotation, xRotation);
+        
+        // Get the player's space input, calculate the velocity, and fly
+        Vector3 force = Vector3.zero;
+        if (Input.GetButton("Jump"))
+        {
+            force = Vector3.up * thrustForce;
+            configurableJoint.yDrive = new JointDrive
+            {
+                positionSpring = 0.0f,
+                positionDamper = 0.0f,
+                maximumForce = 0.0f
+            };
+        }
+        else
+        {
+            configurableJoint.yDrive = new JointDrive
+            {
+                positionSpring = 20.0f,
+                positionDamper = 0.0f,
+                maximumForce = 40.0f
+            };
+        }
+        playerController.Thrust(force);
     }
 }

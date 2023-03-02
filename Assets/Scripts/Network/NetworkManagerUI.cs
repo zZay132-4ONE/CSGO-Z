@@ -26,9 +26,4 @@ public class NetworkManagerUI : MonoBehaviour
         serverBtn.onClick.AddListener(() => { NetworkManager.Singleton.StartServer(); });
         clientBtn.onClick.AddListener(() => NetworkManager.Singleton.StartClient());
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
 }

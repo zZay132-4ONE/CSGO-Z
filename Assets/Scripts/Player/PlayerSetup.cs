@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -20,9 +18,9 @@ public class PlayerSetup : NetworkBehaviour
         if (!IsLocalPlayer)
         {
             // If the player is not local, then disable all its components
-            foreach (Behaviour component in componentsToDisable)
+            for (int i = 0; i < componentsToDisable.Length; i++)
             {
-                component.enabled = false;
+                componentsToDisable[i].enabled = false;
             }
         }
         else
@@ -36,8 +34,11 @@ public class PlayerSetup : NetworkBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDisable()
     {
+        if (sceneCamera != null)
+        {
+            sceneCamera.gameObject.SetActive(true);
+        }
     }
 }
